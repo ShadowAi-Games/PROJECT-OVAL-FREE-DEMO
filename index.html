@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Oval</title>
+<meta name="description" content="Shoot. Grab. Build. Win. A physics-based multiplayer prototype where your gun is how you move.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥚</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky-top: #3d89f5;
+    --sky-horizon: #cfe7fd;
+    --navy-deep: #080b14;
+    --navy: #0d1220;
+    --panel: #131a2c;
+    --panel-border: #263353;
+    --gold: #ffc72e;
+    --gold-dark: #cf9a12;
+    --cyan: #4fd6ff;
+    --purple: #ad6bfa;
+    --green: #5ee06e;
+    --red: #ff5b5b;
+    --text: #f3f5fb;
+    --text-dim: #9fadc9;
+    --text-dimmer: #6c7998;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--navy-deep);
+    color: var(--text);
+    font-family: "Baloo 2", "Trebuchet MS", sans-serif;
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, .display {
+    font-family: "Bangers", "Baloo 2", sans-serif;
+    letter-spacing: 0.5px;
+    font-weight: 400;
+    text-wrap: balance;
+    margin: 0;
+  }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- nav ---------- */
+  header.nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(8, 11, 20, 0.86);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px;
+    max-width: 1180px; margin: 0 auto;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: "Bangers"; font-size: 22px; color: var(--text); }
+  .brand .egg { font-size: 22px; }
+  .nav-links { display: flex; align-items: center; gap: 22px; font-size: 15px; color: var(--text-dim); }
+  .nav-links a:hover { color: var(--text); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: "Bangers"; letter-spacing: 0.5px; font-size: 17px;
+    padding: 12px 26px; border-radius: 12px; text-decoration: none;
+    border: 2px solid transparent; cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+  .btn:active { transform: translateY(0); }
+  .btn-gold { background: var(--gold); color: #211404; box-shadow: 0 6px 0 var(--gold-dark); }
+  .btn-gold:hover { box-shadow: 0 8px 0 var(--gold-dark); }
+  .btn-ghost { background: transparent; border-color: var(--panel-border); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+  .btn-small { padding: 9px 18px; font-size: 14px; }
+  .btn.pulse { position: relative; }
+  .btn.pulse::after {
+    content: ""; position: absolute; inset: -2px; border-radius: 14px;
+    box-shadow: 0 0 0 0 rgba(255,199,46,0.55);
+    animation: pulse-ring 2.4s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(255,199,46,0.5); }
+    70% { box-shadow: 0 0 0 14px rgba(255,199,46,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,199,46,0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn.pulse::after { animation: none; }
+  }
+
+  /* ---------- floating demo pill ---------- */
+  .float-demo {
+    position: fixed; right: 22px; bottom: 22px; z-index: 60;
+    opacity: 0; transform: translateY(16px) scale(0.9);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 10px 30px -6px rgba(255,199,46,0.55), 0 6px 0 var(--gold-dark);
+  }
+  .float-demo.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative;
+    padding: 76px 0 60px;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(61,137,245,0.35), transparent 70%),
+      linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 100%);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.35), transparent),
+      radial-gradient(2px 2px at 80% 20%, rgba(255,255,255,0.25), transparent),
+      radial-gradient(1.5px 1.5px at 60% 60%, rgba(255,255,255,0.2), transparent),
+      radial-gradient(1.5px 1.5px at 35% 75%, rgba(255,255,255,0.2), transparent);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .hero-grid {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center;
+  }
+  .eyebrow {
+    display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--gold); background: rgba(255,199,46,0.12);
+    border: 1px solid rgba(255,199,46,0.35); padding: 6px 14px; border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-size: clamp(46px, 7vw, 76px);
+    color: var(--text);
+    text-shadow: 0 4px 0 rgba(0,0,0,0.25);
+    line-height: 1.02;
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero-tagline {
+    font-family: "Bangers"; font-size: clamp(20px, 2.6vw, 28px);
+    color: var(--cyan); margin-top: 14px; letter-spacing: 1px;
+  }
+  .hero p.lede {
+    color: var(--text-dim); font-size: 17px; max-width: 46ch; margin-top: 18px;
+  }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+  .hero-note {
+    margin-top: 16px; font-size: 13.5px; color: var(--text-dimmer);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero-note .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex: none; }
+
+  .hero-shot {
+    position: relative; border-radius: 20px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.55), 0 0 0 6px rgba(255,255,255,0.03);
+    transform: rotate(1.2deg);
+  }
+  .hero-shot img { width: 100%; }
+  .hero-shot .chip {
+    position: absolute; top: 14px; left: 14px;
+    background: rgba(8,11,20,0.75); border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text); font-size: 12px; padding: 6px 12px; border-radius: 999px;
+    font-weight: 600; backdrop-filter: blur(6px);
+  }
+
+  .drift-egg {
+    position: absolute; font-size: 28px; opacity: 0.5; pointer-events: none;
+    animation: drift 14s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+  }
+  @keyframes drift {
+    0%, 100% { transform: translateY(0) rotate(-6deg); }
+    50% { transform: translateY(-26px) rotate(6deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .drift-egg { animation: none; }
+  }
+
+  /* ---------- scroll reveal ---------- */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ---------- section shell ---------- */
+  section { padding: 88px 0; }
+  .section-head { text-align: center; max-width: 640px; margin: 0 auto 52px; }
+  .section-head .eyebrow { margin-bottom: 14px; }
+  .section-head h2 { font-size: clamp(32px, 4.5vw, 44px); }
+  .section-head p { color: var(--text-dim); margin-top: 12px; font-size: 16px; }
+
+  /* ---------- how it plays ---------- */
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .pillar {
+    background: linear-gradient(180deg, var(--panel), var(--navy));
+    border: 1px solid var(--panel-border); border-radius: 18px; padding: 30px 26px;
+  }
+  .pillar .icon {
+    width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; margin-bottom: 18px;
+  }
+  .pillar h3 { font-size: 22px; margin-bottom: 10px; color: var(--text); }
+  .pillar p { color: var(--text-dim); font-size: 15px; margin: 0; }
+
+  /* ---------- eggs ---------- */
+  .eggs-section { background: radial-gradient(ellipse 1000px 400px at 50% 0%, rgba(173,107,250,0.12), transparent), var(--navy); }
+  .egg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .egg-card {
+    background: var(--panel); border: 1px solid var(--panel-border); border-radius: 18px;
+    padding: 24px; position: relative; overflow: hidden;
+    transition: transform 0.18s ease, border-color 0.18s ease;
+  }
+  .egg-card:hover { transform: translateY(-4px); border-color: var(--egg-color, var(--cyan)); }
+  .egg-card::before {
+    content: ""; position: absolute; inset: 0; opacity: 0.08; pointer-events: none;
+    background: radial-gradient(circle at 85% -10%, var(--egg-color, var(--cyan)), transparent 60%);
+  }
+  .egg-chip {
+    width: 46px; height: 46px; border-radius: 14px; background: var(--egg-color, var(--cyan));
+    display: flex; align-items: center; justify-content: center; font-family: "Bangers"; font-size: 22px; color: #10131c;
+    margin-bottom: 16px; box-shadow: 0 6px 14px -6px var(--egg-color, var(--cyan));
+  }
+  .egg-card h3 { font-size: 21px; color: var(--text); display: flex; align-items: baseline; gap: 8px; }
+  .egg-card .rarity { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--egg-color, var(--cyan)); font-weight: 700; }
+  .egg-card .ability { color: var(--cyan); font-weight: 700; font-size: 13.5px; margin-top: 8px; }
+  .egg-card .desc { color: var(--text-dim); font-size: 13.5px; margin-top: 6px; }
+  .starter-note { text-align: center; color: var(--text-dimmer); font-size: 13.5px; margin-top: 28px; }
+
+  /* ---------- modes ---------- */
+  .modes-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  .mode-card {
+    background: linear-gradient(180deg, var(--panel), var(--navy));
+    border: 1px solid var(--panel-border); border-radius: 16px; padding: 20px 16px; text-align: center;
+  }
+  .mode-card .glyph { font-size: 26px; margin-bottom: 10px; }
+  .mode-card h4 { font-family: "Bangers"; font-size: 16px; color: var(--text); letter-spacing: 0.5px; }
+  .mode-card p { font-size: 12.5px; color: var(--text-dim); margin-top: 6px; }
+
+  /* ---------- showcase ---------- */
+  .showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  .showcase-shot { border-radius: 18px; overflow: hidden; border: 1px solid var(--panel-border); box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+  .showcase ul { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-direction: column; gap: 14px; }
+  .showcase li { display: flex; gap: 12px; color: var(--text-dim); font-size: 15px; }
+  .showcase li .check { color: var(--green); flex: none; font-weight: 700; }
+
+  /* ---------- cta / download ---------- */
+  .cta-section {
+    background: linear-gradient(180deg, var(--navy) 0%, #0a0e18 100%);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    text-align: center;
+  }
+  .cta-section h2 { font-size: clamp(30px, 4vw, 42px); }
+  .cta-section p { color: var(--text-dim); max-width: 50ch; margin: 14px auto 0; }
+  .cta-buttons { display: flex; justify-content: center; gap: 16px; margin-top: 32px; flex-wrap: wrap; }
+  .honest-box {
+    max-width: 700px; margin: 44px auto 0; text-align: left;
+    background: var(--panel); border: 1px solid var(--panel-border); border-radius: 16px; padding: 22px 26px;
+    font-size: 13.5px; color: var(--text-dim);
+  }
+  .honest-box strong { color: var(--text); }
+  .honest-box ul { margin: 10px 0 0; padding-left: 20px; }
+  .honest-box li { margin-bottom: 6px; }
+
+  /* ---------- footer ---------- */
+  footer { padding: 40px 0 50px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .footer-inner .brand { font-size: 17px; }
+  .footer-links { display: flex; gap: 22px; font-size: 14px; color: var(--text-dim); }
+  .footer-links a:hover { color: var(--text); }
+  .footer-meta { font-size: 12.5px; color: var(--text-dimmer); margin-top: 18px; }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-shot { order: -1; transform: none; }
+    .pillars { grid-template-columns: 1fr; }
+    .egg-grid { grid-template-columns: repeat(2, 1fr); }
+    .modes-grid { grid-template-columns: repeat(2, 1fr); }
+    .showcase { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .egg-grid { grid-template-columns: 1fr; }
+    .modes-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="egg">🥚</span> PROJECT OVAL</div>
+    <nav class="nav-links">
+      <a href="#eggs">Eggs</a>
+      <a href="#modes">Modes</a>
+      <a href="#behind">Behind the Scenes</a>
+      <a href="#get-it">Get It</a>
+    </nav>
+    <a class="btn btn-gold btn-small pulse" href="play/index.html">🎮 Try Free Demo</a>
+  </div>
+</header>
+
+<section class="hero">
+  <span class="drift-egg" style="top:12%; left:6%; animation-delay:0s;">🥚</span>
+  <span class="drift-egg" style="top:68%; left:14%; animation-delay:-4s; font-size:20px;">🥚</span>
+  <span class="drift-egg" style="top:22%; left:92%; animation-delay:-8s; font-size:22px;">🥚</span>
+  <span class="drift-egg" style="top:78%; left:88%; animation-delay:-2s;">🥚</span>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">v0.1 playable build · in active development</span>
+      <h1>SHOOT. GRAB.<br>BUILD. <span class="accent">WIN.</span></h1>
+      <div class="hero-tagline">Your gun is how you move.</div>
+      <p class="lede">Project Oval is a physics-based arena shooter where firing your weapon launches <em>you</em>, not just your bolt. Grapple across gaps, throw up cover mid-fight, and pick from six Eggs with real abilities to make it yours.</p>
+      <div class="cta-row">
+        <a class="btn btn-gold pulse" href="play/index.html">🎮 Try Free Demo</a>
+        <a class="btn btn-ghost" href="downloads/ProjectOval-v0.1-demo-windows.zip">⭳ Download for Windows</a>
+      </div>
+      <div class="hero-note"><span class="dot"></span> No account, no password — just a name, saved locally on your machine.</div>
+    </div>
+    <div class="hero-shot">
+      <span class="chip">Live in-engine capture</span>
+      <img src="assets/tutorial_shot.png" alt="First-person gameplay in Project Oval, showing the HUD, hotbar, and a training arena">
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <span class="eyebrow">The core loop</span>
+      <h2>Three tools. One fight.</h2>
+      <p>No walk key, no jump button — every Egg gets around with the exact same three tools it fights and builds with.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar">
+        <div class="icon" style="background:rgba(255,199,46,0.15); color:var(--gold);">🔫</div>
+        <h3>Shoot to move</h3>
+        <p>Fire at the ground and the recoil launches you skyward. Every gun doubles as a jetpack — the harder it hits, the further you fly.</p>
+      </div>
+      <div class="pillar">
+        <div class="icon" style="background:rgba(79,214,255,0.15); color:var(--cyan);">🖐️</div>
+        <h3>Grab anything</h3>
+        <p>Pull yourself toward crystal walls and ledges, or grab another Egg clean out of the air and reel them in.</p>
+      </div>
+      <div class="pillar">
+        <div class="icon" style="background:rgba(94,224,110,0.15); color:var(--green);">🧱</div>
+        <h3>Build on the fly</h3>
+        <p>Blocks, ramps, and walls drop instantly — throw up cover mid-fight or bridge a gap nobody else can cross.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="eggs" class="eggs-section">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <span class="eyebrow">Choose your Egg</span>
+      <h2>6 starter Eggs, 6 real abilities</h2>
+      <p>Every player starts with Oval. Finish the tutorial to pick a second — the rest come from Battle Pass crates.</p>
+    </div>
+    <div class="egg-grid">
+      <div class="egg-card" style="--egg-color:#fff8ee;">
+        <div class="egg-chip" style="color:#211404;">O</div>
+        <h3>Oval <span class="rarity">Common</span></h3>
+        <div class="ability">Steady Shell</div>
+        <div class="desc">The balanced default — no special ability, no weaknesses. Every account starts here.</div>
+      </div>
+      <div class="egg-card" style="--egg-color:#f3591f;">
+        <div class="egg-chip">K</div>
+        <h3>Kai <span class="rarity">Rare</span></h3>
+        <div class="ability">Flame Arsenal</div>
+        <div class="desc">A hot-blooded fighter — for a few seconds, every shot also burns.</div>
+      </div>
+      <div class="egg-card" style="--egg-color:#3fd9f2;">
+        <div class="egg-chip">D</div>
+        <h3>Dash <span class="rarity">Common</span></h3>
+        <div class="ability">Quick Dash</div>
+        <div class="desc">An instant burst of speed in whatever direction you're facing. Always on the move.</div>
+      </div>
+      <div class="egg-card" style="--egg-color:#7fc4ff;">
+        <div class="egg-chip">B</div>
+        <h3>Bubbles <span class="rarity">Rare</span></h3>
+        <div class="ability">Bubble Shield</div>
+        <div class="desc">Halves incoming damage for a few seconds behind a real, visible shield.</div>
+      </div>
+      <div class="egg-card" style="--egg-color:#4cca5a;">
+        <div class="egg-chip">V</div>
+        <h3>Vine <span class="rarity">Rare</span></h3>
+        <div class="ability">Long Grab</div>
+        <div class="desc">One instant grab-pull at far more than normal range — never lets go once it's got hold.</div>
+      </div>
+      <div class="egg-card" style="--egg-color:#d966fa;">
+        <div class="egg-chip">C</div>
+        <h3>Comet <span class="rarity">Epic</span></h3>
+        <div class="ability">Meteor Launch</div>
+        <div class="desc">Launches skyward, then slams back down like a falling star for real area damage.</div>
+      </div>
+    </div>
+    <p class="starter-note">Only these six have real gameplay behind them right now — a wider 30-Egg roster exists in design, not yet in the build.</p>
+  </div>
+</section>
+
+<section id="modes">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <span class="eyebrow">How you win</span>
+      <h2>Five ways to play</h2>
+      <p>Every mode below has its own real, distinct win condition — not just a label on the same map.</p>
+    </div>
+    <div class="modes-grid">
+      <div class="mode-card">
+        <div class="glyph">🛡️</div>
+        <h4>TEAM BATTLE</h4>
+        <p>Open-world 4-base sandbox with generators and shops.</p>
+      </div>
+      <div class="mode-card">
+        <div class="glyph">⚔️</div>
+        <h4>DEATHMATCH</h4>
+        <p>First Egg to 15 kills takes the match.</p>
+      </div>
+      <div class="mode-card">
+        <div class="glyph">🥚</div>
+        <h4>EGG HUNT</h4>
+        <p>8 hidden golden Eggs scattered across the map — find them all.</p>
+      </div>
+      <div class="mode-card">
+        <div class="glyph">👑</div>
+        <h4>KING OVAL</h4>
+        <p>Hold the center island for a full minute, uninterrupted.</p>
+      </div>
+      <div class="mode-card">
+        <div class="glyph">⚡</div>
+        <h4>OVAL RUSH</h4>
+        <p>Survive 90 seconds to level up your own Oval Egg for real.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="showcase">
+  <div class="wrap showcase reveal">
+    <div class="showcase-shot">
+      <img src="assets/welcome_shot.png" alt="Project Oval's one-time local profile screen - a name field, no password">
+    </div>
+    <div>
+      <span class="eyebrow">Progression that's actually yours</span>
+      <h2>One name. No password. Ever.</h2>
+      <p style="color:var(--text-dim); margin-top:14px;">The first thing you'll ever see is a single name field — that's it. Everything else saves automatically, locally, on your own machine.</p>
+      <ul>
+        <li><span class="check">✓</span> A real tutorial teaches the core loop, then lets you pick your second Egg</li>
+        <li><span class="check">✓</span> A Battle Pass hands out crates every 10–30 games — duplicates convert to coins</li>
+        <li><span class="check">✓</span> Real tracked Missions, local Ranked stats, and a personal-best Leaderboard</li>
+        <li><span class="check">✓</span> A best-effort LAN host/join scaffold for playing with a friend on the same network</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="behind">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <span class="eyebrow">Behind the scenes</span>
+      <h2>Built in the open, bugs and all</h2>
+    </div>
+    <div class="modes-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="mode-card">
+        <div class="glyph">🥚</div>
+        <h4>The Egg is real geometry</h4>
+        <p>Every character, weapon, and prop is procedurally modeled and generated headlessly - no purchased assets, no image-gen tool involved.</p>
+      </div>
+      <div class="mode-card">
+        <div class="glyph">👻</div>
+        <h4>The "holo" ramp bug</h4>
+        <p>A build piece looked see-through from one angle only. Root cause: an engine quirk in how anchors resolve before a node's first frame - not a missing mesh face.</p>
+      </div>
+      <div class="mode-card">
+        <div class="glyph">🔌</div>
+        <h4>Multiplayer, tested for real</h4>
+        <p>Two separate game processes, hosting and joining each other on the same machine, stood in for two real players - and caught two genuine bugs neither code review would have.</p>
+      </div>
+      <div class="mode-card">
+        <div class="glyph">🎧</div>
+        <h4>Even the sound is generated</h4>
+        <p>Every sound effect is synthesized in code at runtime, not a sample library - the same philosophy as the visuals.</p>
+      </div>
+      <div class="mode-card">
+        <div class="glyph">🖱️</div>
+        <h4>The mouse that wouldn't come back</h4>
+        <p>For a while, finishing a match left your cursor invisible and locked in the menu - found and fixed by tracing exactly one line of engine state across three screens.</p>
+      </div>
+      <div class="mode-card">
+        <div class="glyph">📈</div>
+        <h4>Actively growing</h4>
+        <p>New Eggs, maps, and modes are still landing regularly - this page gets rebuilt every time a real milestone ships.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="get-it">
+  <div class="wrap reveal">
+    <h2>Ready to hatch?</h2>
+    <p>Play instantly in your browser, or grab the Windows build for the full experience.</p>
+    <div class="cta-buttons">
+      <a class="btn btn-gold pulse" href="play/index.html">🎮 Try Free Demo</a>
+      <a class="btn btn-ghost" href="downloads/ProjectOval-v0.1-demo-windows.zip">⭳ Download for Windows (.zip)</a>
+    </div>
+    <div class="honest-box">
+      <strong>Honestly, where this build actually stands:</strong> this is
+      a v0.1 playable prototype, not a finished game.
+      <ul>
+        <li>Only the 6 Eggs above have real abilities — the rest of the roster is design-only.</li>
+        <li>LAN multiplayer (Friends → Host/Join) is an experimental scaffold — it may not connect reliably, and only ever works on the same local network. It doesn't work at all in the browser build (no raw sockets in a browser sandbox).</li>
+        <li>The browser build runs on WebGL (Compatibility rendering) — a couple of visual effects present on desktop don't render there.</li>
+        <li>No image-generation tool was used anywhere — every visual is either procedural code or a real Blender model in this repo.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div class="brand"><span class="egg">🥚</span> PROJECT OVAL</div>
+    <div class="footer-links">
+      <a href="#behind">Behind the Scenes</a>
+      <a href="play/index.html">Try Free Demo</a>
+    </div>
+  </div>
+  <div class="wrap footer-meta">Built with Godot 4.7. Fonts: Bangers &amp; Baloo 2 (Google Fonts, SIL Open Font License).</div>
+</footer>
+
+<a class="btn btn-gold btn-small float-demo" id="floatDemo" href="play/index.html">🎮 Try Free Demo</a>
+
+<script>
+  // Scroll-reveal: sections fade/slide in the first time they enter view.
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && revealEls.length) {
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(function(el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function(el) { el.classList.add('in-view'); });
+  }
+
+  // Floating "Try Free Demo" pill: appears once the hero's own demo
+  // button has scrolled out of view, so there's always one on screen.
+  var floatDemo = document.getElementById('floatDemo');
+  var heroBtn = document.querySelector('.hero .btn-gold');
+  if (floatDemo && heroBtn && 'IntersectionObserver' in window) {
+    var heroIo = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        floatDemo.classList.toggle('show', !entry.isIntersecting);
+      });
+    }, { threshold: 0 });
+    heroIo.observe(heroBtn);
+  }
+</script>
+
+</body>
+</html>
