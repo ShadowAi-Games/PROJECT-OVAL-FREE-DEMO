@@ -149,6 +149,15 @@
     color: var(--text-dim); font-size: 17px; max-width: 46ch; margin-top: 18px;
   }
   .cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+  .hero-stats { display: flex; gap: 28px; margin-top: 26px; }
+  .hero-stat {
+    display: flex; flex-direction: column; font-size: 12px; letter-spacing: 0.5px;
+    text-transform: uppercase; color: var(--text-dim); font-weight: 600;
+  }
+  .hero-stat-num {
+    font-family: "Bangers"; font-size: 34px; color: var(--gold); line-height: 1;
+    text-shadow: 0 3px 0 rgba(0,0,0,0.3);
+  }
   .hero-note {
     margin-top: 16px; font-size: 13.5px; color: var(--text-dimmer);
     display: flex; align-items: center; gap: 8px;
@@ -316,10 +325,15 @@
       <span class="eyebrow">v0.1 playable build · in active development</span>
       <h1>SHOOT. GRAB.<br>BUILD. <span class="accent">WIN.</span></h1>
       <div class="hero-tagline">Your gun is how you move.</div>
-      <p class="lede">Project Oval is a physics-based arena shooter where firing your weapon launches <em>you</em>, not just your bolt. Grapple across gaps, throw up cover mid-fight, and pick from six Eggs with real abilities to make it yours.</p>
+      <p class="lede">Project Oval is a physics-based arena shooter where firing your weapon launches <em>you</em>, not just your bolt. Grapple across gaps, throw up cover mid-fight, and collect from a roster of 30 Eggs, each with a real ability, to make it yours.</p>
       <div class="cta-row">
         <a class="btn btn-gold pulse" href="play/index.html">🎮 Try Free Demo</a>
         <a class="btn btn-ghost" href="downloads/ProjectOval-v0.1-demo-windows.zip">⭳ Download for Windows</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="hero-stat-num">30</span>Eggs</div>
+        <div class="hero-stat"><span class="hero-stat-num">5</span>Modes</div>
+        <div class="hero-stat"><span class="hero-stat-num">0</span>Cost</div>
       </div>
       <div class="hero-note"><span class="dot"></span> No account, no password — just a name, saved locally on your machine.</div>
     </div>
@@ -361,27 +375,27 @@
   <div class="wrap reveal">
     <div class="section-head">
       <span class="eyebrow">Choose your Egg</span>
-      <h2>6 starter Eggs, 6 real abilities</h2>
-      <p>Every player starts with Oval. Finish the tutorial to pick a second — the rest come from Battle Pass crates.</p>
+      <h2>30 Eggs, 30 real abilities</h2>
+      <p>Every account starts with Oval. The other 29 come from real Egg Crates — a free one the moment you finish the tutorial, more from the Battle Pass every 10–30 games.</p>
     </div>
     <div class="egg-grid">
       <div class="egg-card" style="--egg-color:#fff8ee;">
         <div class="egg-chip" style="color:#211404;">O</div>
         <h3>Oval <span class="rarity">Common</span></h3>
-        <div class="ability">Steady Shell</div>
-        <div class="desc">The balanced default — no special ability, no weaknesses. Every account starts here.</div>
+        <div class="ability">Steady Push</div>
+        <div class="desc">The guaranteed starter — balanced stats plus one simple, honest active ability.</div>
       </div>
       <div class="egg-card" style="--egg-color:#f3591f;">
         <div class="egg-chip">K</div>
         <h3>Kai <span class="rarity">Rare</span></h3>
         <div class="ability">Flame Arsenal</div>
-        <div class="desc">A hot-blooded fighter — for a few seconds, every shot also burns.</div>
+        <div class="desc">Every shot burns for a few seconds — and Kai alone can shop for permanent Fire Guns.</div>
       </div>
       <div class="egg-card" style="--egg-color:#3fd9f2;">
         <div class="egg-chip">D</div>
         <h3>Dash <span class="rarity">Common</span></h3>
         <div class="ability">Quick Dash</div>
-        <div class="desc">An instant burst of speed in whatever direction you're facing. Always on the move.</div>
+        <div class="desc">A burst of speed in your facing direction — ramming an opponent mid-dash deals real damage.</div>
       </div>
       <div class="egg-card" style="--egg-color:#7fc4ff;">
         <div class="egg-chip">B</div>
@@ -389,20 +403,38 @@
         <div class="ability">Bubble Shield</div>
         <div class="desc">Halves incoming damage for a few seconds behind a real, visible shield.</div>
       </div>
-      <div class="egg-card" style="--egg-color:#4cca5a;">
-        <div class="egg-chip">V</div>
-        <h3>Vine <span class="rarity">Rare</span></h3>
-        <div class="ability">Long Grab</div>
-        <div class="desc">One instant grab-pull at far more than normal range — never lets go once it's got hold.</div>
+      <div class="egg-card" style="--egg-color:#8a7566;">
+        <div class="egg-chip">R</div>
+        <h3>Rocky <span class="rarity">Common</span></h3>
+        <div class="ability">Firm Shell</div>
+        <div class="desc">Takes noticeably less knockback from every hit — built to hold ground, not run.</div>
       </div>
-      <div class="egg-card" style="--egg-color:#d966fa;">
-        <div class="egg-chip">C</div>
-        <h3>Comet <span class="rarity">Epic</span></h3>
-        <div class="ability">Meteor Launch</div>
-        <div class="desc">Launches skyward, then slams back down like a falling star for real area damage.</div>
+      <div class="egg-card" style="--egg-color:#f2c73d;">
+        <div class="egg-chip">P</div>
+        <h3>Penny <span class="rarity">Common</span></h3>
+        <div class="ability">Small Savings</div>
+        <div class="desc">Every shop item costs less — the resourceful player's Egg of choice.</div>
+      </div>
+      <div class="egg-card" style="--egg-color:#f4faf4;">
+        <div class="egg-chip">P</div>
+        <h3>Patch <span class="rarity">Common</span></h3>
+        <div class="ability">Repair Pack</div>
+        <div class="desc">Drops a real healing pack on the ground for you or a teammate to collect.</div>
+      </div>
+      <div class="egg-card" style="--egg-color:#e04c4c;">
+        <div class="egg-chip">T</div>
+        <h3>Tackle <span class="rarity">Common</span></h3>
+        <div class="ability">Charge</div>
+        <div class="desc">A short forward sprint that shoves anyone caught in the way.</div>
+      </div>
+      <div class="egg-card" style="--egg-color:#ffeb66;">
+        <div class="egg-chip">G</div>
+        <h3>Glow <span class="rarity">Common</span></h3>
+        <div class="ability">Glow</div>
+        <div class="desc">A soft light constantly follows Glow — brighter, and a little easier to spot.</div>
       </div>
     </div>
-    <p class="starter-note">Only these six have real gameplay behind them right now — a wider 30-Egg roster exists in design, not yet in the build.</p>
+    <p class="starter-note">9 of the full 30 shown here — every single one has a real, working ability with real counterplay, not just a name and a color.</p>
   </div>
 </section>
 
@@ -515,8 +547,8 @@
       <strong>Honestly, where this build actually stands:</strong> this is
       a v0.1 playable prototype, not a finished game.
       <ul>
-        <li>Only the 6 Eggs above have real abilities — the rest of the roster is design-only.</li>
-        <li>LAN multiplayer (Friends → Host/Join) is an experimental scaffold — it may not connect reliably, and only ever works on the same local network. It doesn't work at all in the browser build (no raw sockets in a browser sandbox).</li>
+        <li>All 30 Eggs have real, working abilities with real counterplay — get them from Egg Crates, starting with one free the moment you finish the tutorial.</li>
+        <li>Real matchmaking exists in the code (auto-search for other players for 15s before filling the rest with bots) but needs an always-on relay server that isn't deployed publicly yet — right now every match runs solo against bots. LAN multiplayer (Friends → Host/Join) is a separate, working same-network option.</li>
         <li>The browser build runs on WebGL (Compatibility rendering) — a couple of visual effects present on desktop don't render there.</li>
         <li>No image-generation tool was used anywhere — every visual is either procedural code or a real Blender model in this repo.</li>
       </ul>
