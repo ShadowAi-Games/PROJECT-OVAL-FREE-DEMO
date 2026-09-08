@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shadowai-games.github.io/PROJECT-OVAL-FREE-DEMO/sitemap.xml
