@@ -159,7 +159,7 @@
     color: var(--text-dim); font-size: 17px; max-width: 46ch; margin-top: 18px;
   }
   .cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
-  .hero-stats { display: flex; gap: 28px; margin-top: 26px; }
+  .hero-stats { display: flex; gap: 24px; margin-top: 26px; flex-wrap: wrap; }
   .hero-stat {
     display: flex; flex-direction: column; font-size: 12px; letter-spacing: 0.5px;
     text-transform: uppercase; color: var(--text-dim); font-weight: 600;
@@ -248,8 +248,14 @@
   }
   .egg-card h3 { font-size: 21px; color: var(--text); display: flex; align-items: baseline; gap: 8px; }
   .egg-card .rarity { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--egg-color, var(--cyan)); font-weight: 700; }
-  .egg-card .ability { color: var(--cyan); font-weight: 700; font-size: 13.5px; margin-top: 8px; }
-  .egg-card .desc { color: var(--text-dim); font-size: 13.5px; margin-top: 6px; }
+  .ability-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .ability-pills span {
+    font-size: 11.5px; font-weight: 700; color: var(--navy-deep);
+    background: var(--egg-color, var(--cyan)); padding: 4px 10px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .ability-pills span.passive { background: transparent; color: var(--text-dim); border: 1px solid var(--panel-border); }
+  .egg-card .desc { color: var(--text-dim); font-size: 13.5px; margin-top: 10px; }
   .starter-note { text-align: center; color: var(--text-dimmer); font-size: 13.5px; margin-top: 28px; }
 
   /* ---------- modes ---------- */
@@ -332,16 +338,17 @@
   <span class="drift-egg" style="top:78%; left:88%; animation-delay:-2s;">🥚</span>
   <div class="wrap hero-grid">
     <div>
-      <span class="eyebrow">v0.1 playable build · in active development</span>
+      <span class="eyebrow">v0.1 playable build · just buffed the whole roster</span>
       <h1>SHOOT. GRAB.<br>BUILD. <span class="accent">WIN.</span></h1>
       <div class="hero-tagline">Your gun is how you move.</div>
-      <p class="lede">Project Oval is a physics-based arena shooter where firing your weapon launches <em>you</em>, not just your bolt. Grapple across gaps, throw up cover mid-fight, and collect from a roster of 30 Eggs, each with a real ability, to make it yours.</p>
+      <p class="lede">Project Oval is a physics-based arena shooter where firing your weapon launches <em>you</em>, not just your bolt. Grapple across gaps, throw up cover mid-fight, and collect from a roster of 30 Eggs — every one now packing 3 real abilities and hitting harder than before.</p>
       <div class="cta-row">
         <a class="btn btn-gold pulse" href="play/index.html">🎮 Try Free Demo</a>
         <a class="btn btn-ghost" href="downloads/ProjectOval-v0.1-demo-windows.zip">⭳ Download for Windows</a>
       </div>
       <div class="hero-stats">
         <div class="hero-stat"><span class="hero-stat-num">30</span>Eggs</div>
+        <div class="hero-stat"><span class="hero-stat-num">90</span>Abilities</div>
         <div class="hero-stat"><span class="hero-stat-num">5</span>Modes</div>
         <div class="hero-stat"><span class="hero-stat-num">0</span>Cost</div>
       </div>
@@ -385,66 +392,66 @@
   <div class="wrap reveal">
     <div class="section-head">
       <span class="eyebrow">Choose your Egg</span>
-      <h2>30 Eggs, 30 real abilities</h2>
-      <p>Every account starts with Oval. The other 29 come from real Egg Crates — a free one the moment you finish the tutorial, more from the Battle Pass every 10–30 games.</p>
+      <h2>30 Eggs, 90 real abilities</h2>
+      <p>Every Egg just got a full kit rework: 3 real ability slots instead of 1, plus a straight power buff across the board. Every account starts with Oval. The other 29 come from real Egg Crates — a free one the moment you finish the tutorial, more from the Battle Pass every 10–30 games.</p>
     </div>
     <div class="egg-grid">
       <div class="egg-card" style="--egg-color:#fff8ee;">
         <div class="egg-chip" style="color:#211404;">O</div>
         <h3>Oval <span class="rarity">Common</span></h3>
-        <div class="ability">Steady Push</div>
-        <div class="desc">The guaranteed starter — balanced stats plus one simple, honest active ability.</div>
+        <div class="ability-pills"><span>Steady Push</span><span>Steady Guard</span><span>Second Wind</span></div>
+        <div class="desc">The guaranteed starter — balanced stats, now with 3 real active abilities instead of 1.</div>
       </div>
       <div class="egg-card" style="--egg-color:#f3591f;">
         <div class="egg-chip">K</div>
         <h3>Kai <span class="rarity">Rare</span></h3>
-        <div class="ability">Flame Arsenal</div>
-        <div class="desc">Every shot burns for a few seconds — and Kai alone can shop for permanent Fire Guns.</div>
+        <div class="ability-pills"><span>Flame Arsenal</span><span>Firestarter Sprint</span><span>Hot Reload</span></div>
+        <div class="desc">Every shot burns for longer and harder now — and Kai alone can shop for permanent Fire Guns.</div>
       </div>
       <div class="egg-card" style="--egg-color:#3fd9f2;">
         <div class="egg-chip">D</div>
         <h3>Dash <span class="rarity">Common</span></h3>
-        <div class="ability">Quick Dash</div>
-        <div class="desc">A burst of speed in your facing direction — ramming an opponent mid-dash deals real damage.</div>
+        <div class="ability-pills"><span>Quick Dash</span><span>Afterburner</span><span>Brace</span></div>
+        <div class="desc">A burst of speed in your facing direction — ramming an opponent mid-dash deals real, bigger damage.</div>
       </div>
       <div class="egg-card" style="--egg-color:#7fc4ff;">
         <div class="egg-chip">B</div>
         <h3>Bubbles <span class="rarity">Rare</span></h3>
-        <div class="ability">Bubble Shield</div>
-        <div class="desc">Halves incoming damage for a few seconds behind a real, visible shield.</div>
+        <div class="ability-pills"><span>Bubble Shield</span><span>Soothing Pop</span><span>Sticky Foam</span></div>
+        <div class="desc">Cuts incoming damage by 60% for 6 seconds behind a real, visible shield — plus an instant heal and a slow field.</div>
       </div>
       <div class="egg-card" style="--egg-color:#8a7566;">
         <div class="egg-chip">R</div>
         <h3>Rocky <span class="rarity">Common</span></h3>
-        <div class="ability">Firm Shell</div>
-        <div class="desc">Takes noticeably less knockback from every hit — built to hold ground, not run.</div>
+        <div class="ability-pills"><span class="passive">Firm Shell</span><span>Bracing Stance</span><span>Boulder Mode</span></div>
+        <div class="desc">40% less knockback all the time, plus two new on-demand defensive actives — built to hold ground, not run.</div>
       </div>
       <div class="egg-card" style="--egg-color:#f2c73d;">
         <div class="egg-chip">P</div>
         <h3>Penny <span class="rarity">Common</span></h3>
-        <div class="ability">Small Savings</div>
-        <div class="desc">Every shop item costs less — the resourceful player's Egg of choice.</div>
+        <div class="ability-pills"><span class="passive">Small Savings</span><span>Rainy Day Fund</span><span>Bulk Buy</span></div>
+        <div class="desc">Cheaper shop items all game, plus an instant heal and an ammo top-up on real cooldowns.</div>
       </div>
       <div class="egg-card" style="--egg-color:#f4faf4;">
         <div class="egg-chip">P</div>
         <h3>Patch <span class="rarity">Common</span></h3>
-        <div class="ability">Repair Pack</div>
-        <div class="desc">Drops a real healing pack on the ground for you or a teammate to collect.</div>
+        <div class="ability-pills"><span>Repair Pack</span><span>Quick Patch</span><span>Field Bandage</span></div>
+        <div class="desc">Drops a real healing pack for the team, plus a self-heal and a damage-reduction window of its own.</div>
       </div>
       <div class="egg-card" style="--egg-color:#e04c4c;">
         <div class="egg-chip">T</div>
         <h3>Tackle <span class="rarity">Common</span></h3>
-        <div class="ability">Charge</div>
-        <div class="desc">A short forward sprint that shoves anyone caught in the way.</div>
+        <div class="ability-pills"><span>Charge</span><span>Brace for Impact</span><span>Unstoppable</span></div>
+        <div class="desc">A short forward sprint that shoves anyone caught in the way — now backed by real damage resist and knockback immunity.</div>
       </div>
       <div class="egg-card" style="--egg-color:#ffeb66;">
         <div class="egg-chip">G</div>
         <h3>Glow <span class="rarity">Common</span></h3>
-        <div class="ability">Glow</div>
-        <div class="desc">A soft light constantly follows Glow — brighter, and a little easier to spot.</div>
+        <div class="ability-pills"><span class="passive">Glow</span><span>Warm Light</span><span>Blinding Glow</span></div>
+        <div class="desc">A soft light always gives away Glow's position — offset by a real heal and a slow field of its own.</div>
       </div>
     </div>
-    <p class="starter-note">9 of the full 30 shown here — every single one has a real, working ability with real counterplay, not just a name and a color.</p>
+    <p class="starter-note">9 of the full 30 shown here — every single one now has 3 real ability slots with real counterplay, not just a name and a color.</p>
   </div>
 </section>
 
@@ -538,8 +545,8 @@
       </div>
       <div class="mode-card">
         <div class="glyph">📈</div>
-        <h4>Actively growing</h4>
-        <p>New Eggs, maps, and modes are still landing regularly - this page gets rebuilt every time a real milestone ships.</p>
+        <h4>Just shipped: the 3-ability rework</h4>
+        <p>Every Egg went from 1 ability slot to 3, plus a real numbers pass (health, ability damage, passive percentages) across the entire roster - this page gets rebuilt every time a real milestone ships.</p>
       </div>
     </div>
   </div>
@@ -557,7 +564,7 @@
       <strong>Honestly, where this build actually stands:</strong> this is
       a v0.1 playable prototype, not a finished game.
       <ul>
-        <li>All 30 Eggs have real, working abilities with real counterplay — get them from Egg Crates, starting with one free the moment you finish the tutorial.</li>
+        <li>All 30 Eggs have 3 real, working ability slots each with real counterplay — get them from Egg Crates, starting with one free the moment you finish the tutorial.</li>
         <li>Real matchmaking exists in the code (auto-search for other players for 15s before filling the rest with bots) but needs an always-on relay server that isn't deployed publicly yet — right now every match runs solo against bots. LAN multiplayer (Friends → Host/Join) is a separate, working same-network option.</li>
         <li>The browser build runs on WebGL (Compatibility rendering) — a couple of visual effects present on desktop don't render there.</li>
         <li>No image-generation tool was used anywhere — every visual is either procedural code or a real Blender model in this repo.</li>
